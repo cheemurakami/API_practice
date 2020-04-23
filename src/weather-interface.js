@@ -2,9 +2,7 @@ import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles.css';
 import $ from "jquery";
-
-
-
+import { apiCall } from './apicall.js';
 
 $(document).ready(function () {
   $('#weatherLocation').click(function () {
@@ -42,26 +40,29 @@ $(document).ready(function () {
           return false;
         }
       })
-      .catch(function (error) {
+      .catch(function () {
         return false;
       })
       .then(function (responseJson) {
         getElements(responseJson);
       });
 
-    const getElements = function (response) {
-      console.log(response)
-      if (response) {
-        let url = response.data[1].images.downsized_large.url;
-        let image = new Image();
-        image.src = url;
-        document.getElementById("show-gif").appendChild(image);
-      }
+    function randomNum(num) {
+      return Math.floor(Math.random() * (num + 1));
     }
+    const getElements = function (response) {
+      if (response) {
+        let randomIndex = randomNum(response.data.length)
+        let url = response.data[randomIndex].images.downsized_large.url;
+        // let image = new Image();
+        // image.src = url;  
+        $("#show-gif").html(`<img src="${url}">`);
+      }
+    };
   });
-
-
-
-
-
+  $("#gifs").click(function () {
+    apiCall().then(function (responseJson){
+      $("#show-trend-gif").html(`<img src="${responseJson.data[0].images.downsized_large.url}">`);
+    });
+  });
 });
